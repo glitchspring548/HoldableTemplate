@@ -75,12 +75,12 @@ public:
                             }
                         }
                     }
-                    for (auto& buttonList : Buttons::buttons) {
-                        for (auto& button : buttonList) {
-                            if (button.enabled && button.method != nullptr) {
-                                try { button.method(); } catch (...) {}
-                            }
-                        }
+                }
+            }
+            for (auto& buttonList : Buttons::buttons) {
+                for (auto& button : buttonList) {
+                    if (button.enabled && button.method != nullptr) {
+                        try { button.method(); } catch (...) {}
                     }
                 }
             }
