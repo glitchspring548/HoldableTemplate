@@ -1,20 +1,13 @@
 #pragma once
 #include "../BNMResolve.hpp"
-#include "../BNMIncludes.hpp"
-#include "../PhotonResolve.hpp"
-#include "../Menu/Settings.hpp"
-#include <XRInput.hpp>
 #include <cmath>
 #include <cstdlib>
-
-using namespace BNM;
-using namespace BNM::Structures;
+#include "../Menu/Settings.hpp"
 
 struct GunData {
     RaycastHit raycastHit;
     GameObject* pointer;
 };
-
 
 class GunLib {
 private:
@@ -25,52 +18,60 @@ private:
     Vector3 midVelocity = Vector3::zero;
 
 public:
-    float gunLineQuality = 25.0f;
-
     GunLib() {}
     LineRenderer* GetLineRenderer() { return gunLine; }
 
     GunData RenderGun() {
         GunData result;
         Class GorillaTagger = Class("", "GorillaTagger", BNM::Image("Assembly-CSharp.dll"));
-        static BNM::Method<BNM::IL2CPP::Il2CppObject*> instance = GorillaTagger.GetMethod("get_Instance", 0);
-        static BNM::Field<Transform*> gunTransform = GorillaTagger.GetField("rightHandTransform");
-        gunTransform.SetInstance(instance.Call());
-        if (gunTransform.IsValid() == false) {
-            BNM_LOG_INFO(BNM_OBFUSCATE("rightHandTransform not working :("));
+        Method<BNM::IL2CPP::Il2CppObject*> instance = GorillaTagger.GetMethod("get_Instance", 0);
+        Field<BNM::IL2CPP::Il2CppObject*> rightHandTransform = GorillaTagger.GetField("rightHandTransform");
+        rightHandTransform.SetInstance(instance.Call());
+        if (rightHandTransform.IsValid() == false) {
+            BNM_LOG_INFO(BNM_OBFUSCATE("rightHandTransform no worky :("));
             return result;
         }
-        Vector3 startPosition = gunTransform()->GetPosition();
-        Vector3 direction = gunTransform()->GetForward();
+        Transform* gunTransform = (Transform*)rightHandTransform();
+
+        Vector3 startPosition = gunTransform->GetPosition() + (gunTransform->GetForward() * 0.135f);
+        Vector3 direction = gunTransform->GetForward();
+        Vector3 up = -gunTransform->GetUp();
 
         RaycastHit raycastHit;
         bool hit = Physics::Raycast(startPosition, direction, raycastHit);
         Vector3 endPosition = hit ? raycastHit.point : startPosition + direction;
 
-        if (!gunPointer->Alive()) {
+        if (!gunPointer) {
             gunPointer = GameObject::CreatePrimitive(PrimitiveType::Sphere);
             GameObject::Destroy(gunPointer->GetComponent(Rigidbody::GetType()));
             GameObject::Destroy(gunPointer->GetComponent(SphereCollider::GetType()));
+            Renderer* renderer = (Renderer*)gunPointer->GetComponent(Renderer::GetType());
+            Material* mat = renderer->GetMaterial();
+            mat->SetShader(Shader::Find("GUI/Text Shader"));
+            mat->SetColor(Settings::backgroundColor);
         }
 
         gunPointer->SetActive(true);
         gunPointer->GetTransform()->SetLocalScale(Vector3(0.2f, 0.2f, 0.2f));
         gunPointer->GetTransform()->SetPosition(endPosition);
 
-        Renderer* renderer = (Renderer*)gunPointer->GetComponent(Renderer::GetType());
-        Material* mat = renderer->GetMaterial();
-        mat->SetColor(XRInput::GetBoolFeature(BoolFeature::TriggerButton, Controller::Right) ? Settings::backgroundColor.RGBMultiplied(Color(.5f, .5f, .5f)) : Settings::backgroundColor);
-
-        if (!gunLine->Alive()) {
+        if (!gunLine) {
             GameObject* lineGO = (GameObject*)GameObject::GetClass().CreateNewObjectParameters(CreateMonoString("GunLine"));
             gunLine = (LineRenderer*)lineGO->AddComponent(LineRenderer::GetType());
+            gunLine->SetMaterial((Material*)Material::GetClass().CreateNewObjectParameters(Shader::Find("GUI/Text Shader")));
             gunLine->SetStartWidth(0.025f);
             gunLine->SetEndWidth(0.025f);
             gunLine->SetUseWorldScape(true);
         }
 
-        gunLine->SetStartColor(Settings::backgroundColor);
-        gunLine->SetEndColor(XRInput::GetBoolFeature(BoolFeature::TriggerButton, Controller::Right) ? Settings::backgroundColor.RGBMultiplied(Color(.5f, .5f, .5f)) : Settings::backgroundColor);
+        gunLine->GetGameObject()->SetActive(true);
+
+        Color current = Settings::backgroundColor;
+        gunLine->SetStartColor(current);
+        gunLine->SetEndColor(current);
+
+        int steps = 2;
+        gunLine->SetPositionCount(steps);
         gunLine->SetPosition(0, startPosition);
         gunLine->SetPosition(1, endPosition);
 
@@ -81,7 +82,6 @@ public:
 
     void Cleanup() {
         if (gunPointer) {
-            gunPointer->SetActive(false);
             GameObject::Destroy(gunPointer);
             gunPointer = nullptr;
         }
@@ -89,7 +89,6 @@ public:
         if (gunLine) {
             GameObject* lineGO = gunLine->GetGameObject();
             if (lineGO) {
-                lineGO->SetActive(false);
                 GameObject::Destroy(lineGO);
             }
             gunLine = nullptr;

@@ -33,6 +33,7 @@ public:
             {//Movement - 2
                     ButtonInfo {.buttonText = "back", .method = []() { Settings::setCurrentCategory(0); }, .isTogglable = false, .toolTip = "Goes back to main menu"},
                     ButtonInfo {.buttonText = "Plats", .method = []() { MovementMods::platforms(); }, .toolTip = "Plats"},
+                    ButtonInfo {.buttonText = "Platform Gun", .method = []() { MovementMods::PlatformGun(); }, .toolTip = "Plats"},
             },
             {//Player - 3
                     ButtonInfo {.buttonText = "back", .method = []() { Settings::setCurrentCategory(0); }, .isTogglable = false, .toolTip = "Goes back to main menu"},

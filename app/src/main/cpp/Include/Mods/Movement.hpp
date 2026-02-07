@@ -5,6 +5,7 @@
 #include "../httplib.h"
 #include "../json.hpp"
 #include "../XRInput.hpp"
+#include "GunLib.hpp"
 
 class MovementMods {
 private:
@@ -56,6 +57,40 @@ public:
         } else if (platR) {
             destroyPlatform(platR);
             platR = nullptr;
+        }
+    }
+    static void PlatformGun() {
+        static GunLib gun;
+        auto createPlatform = [](GameObject* pointer) -> GameObject * {
+            GameObject *plat = GameObject::CreatePrimitive(PrimitiveType::Cube);
+
+            Renderer *renderer = (Renderer *)plat->GetComponent(Renderer::GetType());
+            if (renderer) {
+                Material *mat = renderer->GetMaterial();
+                if (mat) {
+                    mat->SetShader(Shader::Find("Standard"));
+                    mat->SetColor(Settings::backgroundColor);
+                }
+            }
+
+            Transform *pointerTransform = pointer->GetTransform();
+            plat->GetTransform()->SetLocalScale(Vector3(0.025f, 0.3f, 0.4f));
+            plat->GetTransform()->SetLocalPosition(
+                    pointerTransform->GetPosition() + Vector3(0.0f, -0.07f, 0.0f));
+            plat->GetTransform()->SetLocalRotation(pointerTransform->GetRotation());
+
+            return plat;
+        };
+
+        if (XRInput::GetBoolFeature(BoolFeature::GripButton, Controller::Right)) {
+            GunData data = gun.RenderGun();
+            RaycastHit ray = data.raycastHit;
+            GameObject* pointer = data.pointer;
+            if (XRInput::GetBoolFeature(BoolFeature::TriggerButton, Controller::Right)) {
+                createPlatform(pointer);
+            }
+        } else {
+            gun.Cleanup();
         }
     }
 };
