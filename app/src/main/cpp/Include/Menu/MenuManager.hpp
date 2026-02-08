@@ -280,7 +280,7 @@ public:
     }
 
     static void fixShader(Renderer* rend) { //thanks to @pubertcs for helping wit this
-        auto shader1 = Shader::Find("Universal Render Pipeline/Lit");
+        auto shader1 = Shader::Find("Universal Render Pipeline/Unlit");
         if (shader1 != nullptr) {
             rend->GetMaterial()->SetShader(shader1);
         } else {
