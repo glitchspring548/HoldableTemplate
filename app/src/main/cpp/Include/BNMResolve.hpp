@@ -1064,7 +1064,7 @@ struct LineRenderer : Renderer{
         return color;
     }
     void SetEndColor(Color val){
-        static Method<void> set_startColor = GetClass().GetMethod("set_startColor");
+        static Method<void> set_startColor = GetClass().GetMethod("set_endColor");
         set_startColor[this](val);
     }
     Color GetEndColor(){

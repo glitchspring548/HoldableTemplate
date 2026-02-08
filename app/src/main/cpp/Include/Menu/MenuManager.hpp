@@ -106,6 +106,7 @@ public:
 
         Renderer* bgRenderer = (Renderer*)Settings::menuBackground->GetComponent(Renderer::GetType());
         bgRenderer->GetMaterial()->SetColor(Settings::backgroundColor);
+        fixShader(bgRenderer);
 
         // Canvas
         Settings::canvasObject = (GameObject*)GameObject::GetClass().CreateNewObjectParameters();
@@ -173,6 +174,7 @@ public:
 
             Renderer* rend = (Renderer*)disconnectObj->GetComponent(Renderer::GetType());
             rend->GetMaterial()->SetColor(Settings::backgroundColor);
+            fixShader(rend);
 
             ButtonCollider* bc = (ButtonCollider*)disconnectObj->AddComponent(ButtonCollider::BNMCustomClass.type);
             bc->relatedText = CreateMonoString("DisconnectBTN");
@@ -207,6 +209,7 @@ public:
 
         Renderer *rend = (Renderer *) prevObj->GetComponent(Renderer::GetType());
         rend->GetMaterial()->SetColor(Settings::backgroundColor);
+        fixShader(rend);
 
         ButtonCollider *bc = (ButtonCollider *) prevObj->AddComponent(
                 ButtonCollider::BNMCustomClass.type);
@@ -242,6 +245,7 @@ public:
 
         Renderer *rendNP = (Renderer *) nextObj->GetComponent(Renderer::GetType());
         rendNP->GetMaterial()->SetColor(Settings::backgroundColor);
+        fixShader(rendNP);
 
         ButtonCollider *nbc = (ButtonCollider *) nextObj->AddComponent(
                 ButtonCollider::BNMCustomClass.type);
@@ -275,6 +279,18 @@ public:
         }
     }
 
+    static void fixShader(Renderer* rend) { //thanks to @pubertcs for helping wit this
+        auto shader1 = Shader::Find("Universal Render Pipeline/Lit");
+        if (shader1 != nullptr) {
+            rend->GetMaterial()->SetShader(shader1);
+        } else {
+            auto shader2 = Shader::Find("Standard");
+            if (shader2 != nullptr) {
+                rend->GetMaterial()->SetShader(shader2);
+            }
+        }
+    }
+
     static void CreateButton(float offset, ButtonInfo method) {
         GameObject* buttonObj = GameObject::CreatePrimitive(PrimitiveType::Cube);
         GameObject::Destroy(buttonObj->GetComponent(Rigidbody::GetType()));
@@ -286,6 +302,7 @@ public:
         buttonObj->GetTransform()->SetLocalPosition(Vector3(0.56f, 0.f, 0.28f - offset));
         Renderer* rend = (Renderer *) buttonObj->GetComponent(Renderer::GetType());
         rend->GetMaterial()->SetColor(method.enabled ? Settings::buttonColors[1] : Settings::buttonColors[0]);
+        fixShader(rend);
 
         ButtonCollider* nbc = (ButtonCollider*)buttonObj->AddComponent(ButtonCollider::BNMCustomClass.type);
         nbc->relatedText = CreateMonoString(method.buttonText);
@@ -338,6 +355,7 @@ public:
         Settings::reference->GetTransform()->SetParent(isrightHanded ? GameObject::Find("LeftHand Controller")->GetTransform() : GameObject::Find("RightHand Controller")->GetTransform());
         Renderer* RefRend = (Renderer*)Settings::reference->GetComponent(Renderer::GetType());
         RefRend->GetMaterial()->SetColor(Settings::backgroundColor);
+        fixShader(RefRend);
         Settings::reference->GetTransform()->SetLocalPosition(Vector3(0.f, -0.1f, 0.f));
         Settings::reference->GetTransform()->SetLocalScale(Vector3(0.01f, 0.01f, 0.01f));
         Settings::buttonCollider = (SphereCollider*)Settings::reference->GetComponent(SphereCollider::GetType());
