@@ -67,12 +67,9 @@ public:
                 }
                 if (Settings::menu != nullptr) {
                     if (Settings::fpsText != nullptr) {
-                        if (Settings::fpsText != nullptr) {
-                            FPSUpdateThingy += Time::GetUnscaledDeltaTime();
-                            if (FPSUpdateThingy >= 0.1f) {
-                                Settings::fpsText->SetText("FPS: " + std::to_string((int)(std::round(1.f / Time::GetUnscaledDeltaTime()))));
-                                FPSUpdateThingy -= 0.1f;
-                            }
+                        if (Time::GetFrameCount() >= FPSUpdateThingy + 5) {
+                            Settings::fpsText->SetText("FPS: " + std::to_string((int)(std::round(1.f / Time::GetUnscaledDeltaTime()))));
+                            FPSUpdateThingy = Time::GetFrameCount();
                         }
                     }
                 }
@@ -105,8 +102,8 @@ public:
         Settings::menuBackground->GetTransform()->SetPosition(Vector3(0.05f, 0.f, 0.f));
 
         Renderer* bgRenderer = (Renderer*)Settings::menuBackground->GetComponent(Renderer::GetType());
-        bgRenderer->GetMaterial()->SetColor(Settings::backgroundColor);
         fixShader(bgRenderer);
+        bgRenderer->GetMaterial()->SetColor(Settings::backgroundColor);
 
         // Canvas
         Settings::canvasObject = (GameObject*)GameObject::GetClass().CreateNewObjectParameters();
@@ -173,8 +170,8 @@ public:
             disconnectObj->GetTransform()->SetLocalPosition(Vector3(0.56f, 0.f, 0.6f));
 
             Renderer* rend = (Renderer*)disconnectObj->GetComponent(Renderer::GetType());
-            rend->GetMaterial()->SetColor(Settings::backgroundColor);
             fixShader(rend);
+            rend->GetMaterial()->SetColor(Settings::backgroundColor);
 
             ButtonCollider* bc = (ButtonCollider*)disconnectObj->AddComponent(ButtonCollider::BNMCustomClass.type);
             bc->relatedText = CreateMonoString("DisconnectBTN");
@@ -208,8 +205,8 @@ public:
         prevObj->GetTransform()->SetLocalPosition(Vector3(0.56f, 0.65f, 0.f));
 
         Renderer *rend = (Renderer *) prevObj->GetComponent(Renderer::GetType());
-        rend->GetMaterial()->SetColor(Settings::backgroundColor);
         fixShader(rend);
+        rend->GetMaterial()->SetColor(Settings::backgroundColor);
 
         ButtonCollider *bc = (ButtonCollider *) prevObj->AddComponent(
                 ButtonCollider::BNMCustomClass.type);
@@ -244,8 +241,8 @@ public:
         nextObj->GetTransform()->SetLocalPosition(Vector3(0.56f, -0.65f, 0.f));
 
         Renderer *rendNP = (Renderer *) nextObj->GetComponent(Renderer::GetType());
-        rendNP->GetMaterial()->SetColor(Settings::backgroundColor);
         fixShader(rendNP);
+        rendNP->GetMaterial()->SetColor(Settings::backgroundColor);
 
         ButtonCollider *nbc = (ButtonCollider *) nextObj->AddComponent(
                 ButtonCollider::BNMCustomClass.type);
@@ -301,8 +298,8 @@ public:
         buttonObj->GetTransform()->SetLocalScale(Vector3(0.09f, 0.9f, 0.08f));
         buttonObj->GetTransform()->SetLocalPosition(Vector3(0.56f, 0.f, 0.28f - offset));
         Renderer* rend = (Renderer *) buttonObj->GetComponent(Renderer::GetType());
-        rend->GetMaterial()->SetColor(method.enabled ? Settings::buttonColors[1] : Settings::buttonColors[0]);
         fixShader(rend);
+        rend->GetMaterial()->SetColor(method.enabled ? Settings::buttonColors[1] : Settings::buttonColors[0]);
 
         ButtonCollider* nbc = (ButtonCollider*)buttonObj->AddComponent(ButtonCollider::BNMCustomClass.type);
         nbc->relatedText = CreateMonoString(method.buttonText);
@@ -354,8 +351,8 @@ public:
         Settings::reference = GameObject::CreatePrimitive(PrimitiveType::Sphere);
         Settings::reference->GetTransform()->SetParent(isrightHanded ? GameObject::Find("LeftHand Controller")->GetTransform() : GameObject::Find("RightHand Controller")->GetTransform());
         Renderer* RefRend = (Renderer*)Settings::reference->GetComponent(Renderer::GetType());
-        RefRend->GetMaterial()->SetColor(Settings::backgroundColor);
         fixShader(RefRend);
+        RefRend->GetMaterial()->SetColor(Settings::backgroundColor);
         Settings::reference->GetTransform()->SetLocalPosition(Vector3(0.f, -0.1f, 0.f));
         Settings::reference->GetTransform()->SetLocalScale(Vector3(0.01f, 0.01f, 0.01f));
         Settings::buttonCollider = (SphereCollider*)Settings::reference->GetComponent(SphereCollider::GetType());
