@@ -14,9 +14,6 @@ private:
     GameObject* gunPointer = nullptr;
     LineRenderer* gunLine = nullptr;
 
-    Vector3 midPosition = Vector3::zero;
-    Vector3 midVelocity = Vector3::zero;
-
 public:
     GunLib() {}
     LineRenderer* GetLineRenderer() { return gunLine; }
@@ -93,8 +90,5 @@ public:
             }
             gunLine = nullptr;
         }
-
-        midPosition = Vector3::zero;
-        midVelocity = Vector3::zero;
     }
 };
