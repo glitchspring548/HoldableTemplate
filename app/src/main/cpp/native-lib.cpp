@@ -39,6 +39,11 @@ void new_LateUpdate(void* instance) {
     }
 }
 
+void (*DispatchReport)(void*);
+void new_DispatchReport(void* instance) {
+    BNM_LOG_INFO("Blocked MonkeAgent / GorillaNot caller.");
+}
+
 void OnLoaded() {
     BNM_LOG_INFO(BNM_OBFUSCATE("Hooking Methods Now!!"));
 
@@ -47,6 +52,17 @@ void OnLoaded() {
 
     InvokeHook(Class(BNM_OBFUSCATE("GorillaLocomotion"), BNM_OBFUSCATE("Player"), Image(
             BNM_OBFUSCATE("Assembly-CSharp.dll"))).GetMethod(BNM_OBFUSCATE("Awake")), new_Awake, Awake);
+
+    // MonkeAgent is in the latest GTAG release so older fan games would bypass this.
+    bool hookedDispatchReport = InvokeHook(Class(BNM_OBFUSCATE("MonkeAgent"), Image(
+            BNM_OBFUSCATE("Assembly-CSharp.dll"))).GetMethod(BNM_OBFUSCATE("DispatchReport")), new_DispatchReport, DispatchReport);
+    if (hookedDispatchReport) {
+        // All good so just continue
+    } else {
+        // Try the other ac
+        hookedDispatchReport = InvokeHook(Class(BNM_OBFUSCATE("GorillaNot"), Image(
+                BNM_OBFUSCATE("Assembly-CSharp.dll"))).GetMethod(BNM_OBFUSCATE("DispatchReport")), new_DispatchReport, DispatchReport);
+    }
 
     BNM_LOG_INFO(BNM_OBFUSCATE("Hooked Methods..."));
 }
