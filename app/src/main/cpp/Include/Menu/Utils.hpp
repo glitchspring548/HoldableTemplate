@@ -6,13 +6,9 @@
 #include "../json.hpp"
 #include "../XRInput.hpp"
 
-class PhotonMods {
-private:
+class Utilities {
 public:
-    static void joinrandom() {
-        PhotonNetwork::JoinRandomRoom();
-    }
-    static void joinglitch() {
-        PhotonNetwork::JoinRoom("GLITCH");
+    static std::vector<Player*> GetAllPlayers() {
+        return PhotonNetwork::GetPlayerList();
     }
 };
