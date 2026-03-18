@@ -31,7 +31,7 @@ bool isUpdated = true;
 void (*LateUpdate)(void*);
 void new_LateUpdate(void* instance) {
     LateUpdate(instance);
-    (ModMenu::Update);
+    ModMenu::Update();
 
     if (isUpdated) {
         BNM_LOG_INFO(BNM_OBFUSCATE("Menu Update Called"));
