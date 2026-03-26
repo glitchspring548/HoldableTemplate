@@ -25,7 +25,7 @@ public:
                 Material *mat = renderer->GetMaterial();
                 if (mat) {
                     mat->SetShader(Shader::Find("Standard"));
-                    mat->SetColor(Settings::backgroundColor);
+                    mat->SetColor(Settings::backgroundColor.GetCurrentColor());
                 }
             }
 
@@ -69,7 +69,7 @@ public:
                 Material *mat = renderer->GetMaterial();
                 if (mat) {
                     mat->SetShader(Shader::Find("Standard"));
-                    mat->SetColor(Settings::backgroundColor);
+                    mat->SetColor(Settings::backgroundColor.GetCurrentColor());
                 }
             }
 

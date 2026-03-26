@@ -6,6 +6,7 @@
 #include "../PhotonResolve.hpp"
 #include "ButtonInfo.hpp"
 #include "Buttons.hpp"
+#include "Classes/ColorChanger.hpp"
 
 using namespace BNM;
 using namespace BNM::IL2CPP;
@@ -103,7 +104,11 @@ public:
 
         Renderer* bgRenderer = (Renderer*)Settings::menuBackground->GetComponent(Renderer::GetType());
         fixShader(bgRenderer);
-        bgRenderer->GetMaterial()->SetColor(Settings::backgroundColor);
+        bgRenderer->GetMaterial()->SetColor(Settings::backgroundColor.GetCurrentColor());
+        Settings::menuBackground->AddComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        ColorChanger::ColorChangerComp* CC1 = (ColorChanger::ColorChangerComp*)Settings::menuBackground->GetComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        CC1->obj = Settings::menuBackground;
+        CC1->index = 0;
 
         // Canvas
         Settings::canvasObject = (GameObject*)GameObject::GetClass().CreateNewObjectParameters();
@@ -171,7 +176,11 @@ public:
 
             Renderer* rend = (Renderer*)disconnectObj->GetComponent(Renderer::GetType());
             fixShader(rend);
-            rend->GetMaterial()->SetColor(Settings::backgroundColor);
+            rend->GetMaterial()->SetColor(Settings::backgroundColor.GetCurrentColor());
+            disconnectObj->AddComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+            ColorChanger::ColorChangerComp* CC2 = (ColorChanger::ColorChangerComp*)disconnectObj->GetComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+            CC2->obj = disconnectObj;
+            CC2->index = 0;
 
             ButtonCollider* bc = (ButtonCollider*)disconnectObj->AddComponent(ButtonCollider::BNMCustomClass.type);
             bc->relatedText = CreateMonoString("DisconnectBTN");
@@ -206,7 +215,11 @@ public:
 
         Renderer *rend = (Renderer *) prevObj->GetComponent(Renderer::GetType());
         fixShader(rend);
-        rend->GetMaterial()->SetColor(Settings::backgroundColor);
+        rend->GetMaterial()->SetColor(Settings::backgroundColor.GetCurrentColor());
+        prevObj->AddComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        ColorChanger::ColorChangerComp* CC3 = (ColorChanger::ColorChangerComp*)prevObj->GetComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        CC3->obj = prevObj;
+        CC3->index = 0;
 
         ButtonCollider *bc = (ButtonCollider *) prevObj->AddComponent(
                 ButtonCollider::BNMCustomClass.type);
@@ -242,7 +255,11 @@ public:
 
         Renderer *rendNP = (Renderer *) nextObj->GetComponent(Renderer::GetType());
         fixShader(rendNP);
-        rendNP->GetMaterial()->SetColor(Settings::backgroundColor);
+        rendNP->GetMaterial()->SetColor(Settings::backgroundColor.GetCurrentColor());
+        nextObj->AddComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        ColorChanger::ColorChangerComp* CC4 = (ColorChanger::ColorChangerComp*)nextObj->GetComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        CC4->obj = nextObj;
+        CC4->index = 0;
 
         ButtonCollider *nbc = (ButtonCollider *) nextObj->AddComponent(
                 ButtonCollider::BNMCustomClass.type);
@@ -299,7 +316,11 @@ public:
         buttonObj->GetTransform()->SetLocalPosition(Vector3(0.56f, 0.f, 0.28f - offset));
         Renderer* rend = (Renderer *) buttonObj->GetComponent(Renderer::GetType());
         fixShader(rend);
-        rend->GetMaterial()->SetColor(method.enabled ? Settings::buttonColors[1] : Settings::buttonColors[0]);
+        rend->GetMaterial()->SetColor(method.enabled ? Settings::buttonColors[1].GetCurrentColor() : Settings::buttonColors[0].GetCurrentColor());
+        buttonObj->AddComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        ColorChanger::ColorChangerComp* CC1 = (ColorChanger::ColorChangerComp*)buttonObj->GetComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        CC1->obj = buttonObj;
+        CC1->index = method.enabled ? 2 : 1;
 
         ButtonCollider* nbc = (ButtonCollider*)buttonObj->AddComponent(ButtonCollider::BNMCustomClass.type);
         nbc->relatedText = CreateMonoString(method.buttonText);
@@ -352,7 +373,11 @@ public:
         Settings::reference->GetTransform()->SetParent(isrightHanded ? GameObject::Find("LeftHand Controller")->GetTransform() : GameObject::Find("RightHand Controller")->GetTransform());
         Renderer* RefRend = (Renderer*)Settings::reference->GetComponent(Renderer::GetType());
         fixShader(RefRend);
-        RefRend->GetMaterial()->SetColor(Settings::backgroundColor);
+        RefRend->GetMaterial()->SetColor(Settings::backgroundColor.GetCurrentColor());
+        Settings::reference->AddComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        ColorChanger::ColorChangerComp* CC1 = (ColorChanger::ColorChangerComp*)Settings::reference->GetComponent(ColorChanger::ColorChangerComp::BNMCustomClass.type);
+        CC1->obj = Settings::reference;
+        CC1->index = 0;
         Settings::reference->GetTransform()->SetLocalPosition(Vector3(0.f, -0.1f, 0.f));
         Settings::reference->GetTransform()->SetLocalScale(Vector3(0.01f, 0.01f, 0.01f));
         Settings::buttonCollider = (SphereCollider*)Settings::reference->GetComponent(SphereCollider::GetType());

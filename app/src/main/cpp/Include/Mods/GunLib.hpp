@@ -45,7 +45,7 @@ public:
             Renderer* renderer = (Renderer*)gunPointer->GetComponent(Renderer::GetType());
             Material* mat = renderer->GetMaterial();
             mat->SetShader(Shader::Find("GUI/Text Shader"));
-            mat->SetColor(Settings::backgroundColor);
+            mat->SetColor(Settings::backgroundColor.GetColorTime(0.f));
         }
 
         gunPointer->SetActive(true);
@@ -63,7 +63,7 @@ public:
 
         gunLine->GetGameObject()->SetActive(true);
 
-        Color current = Settings::backgroundColor;
+        Color current = Settings::backgroundColor.GetCurrentColor();
         gunLine->SetStartColor(current);
         gunLine->SetEndColor(current);
 

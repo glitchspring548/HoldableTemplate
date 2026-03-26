@@ -2,13 +2,14 @@
 #include <BNMResolve.hpp>
 #include <XRInput.hpp>
 #include "../NotiLib/NotiLib.hpp"
+#include "Classes/ExtGradient.hpp"
 
 using namespace BNM;
 
 NotiLib* Settings::noti;
 
-Color Settings::backgroundColor;
-std::vector<Color> Settings::buttonColors;
+ExtGradient Settings::backgroundColor;
+std::vector<ExtGradient> Settings::buttonColors;
 std::vector<Color> Settings::textColors;
 Font* Settings::currentFont = nullptr;
 
@@ -33,10 +34,10 @@ int Settings::pageNumber = 0;
 int Settings::_currentCategory = 0;
 
 void Settings::Init() {
-    backgroundColor = Color(0.1f, 0.1f, 0.1f, 0.95f);
+    backgroundColor = ExtGradient { .rainbow = true };
     buttonColors = {
-            Color::magenta,
-            Color::yellow
+            ExtGradient { .pastelRainbow = true },
+            ExtGradient { .colors = ExtGradient::GetSolidGradient(Color::green) }
     };
     textColors = {
             Color::white,

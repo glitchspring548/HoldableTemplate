@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <XRInput.hpp>
 #include "../NotiLib/NotiLib.hpp"
+#include "Classes/ExtGradient.hpp"
 
 using namespace BNM;
 
@@ -11,8 +12,8 @@ class Settings {
 public:
     static NotiLib* noti;
 
-    static Color backgroundColor;
-    static std::vector<Color> buttonColors;
+    static ExtGradient backgroundColor;
+    static std::vector<ExtGradient> buttonColors;
     static std::vector<Color> textColors;
 
     static Font* currentFont;
