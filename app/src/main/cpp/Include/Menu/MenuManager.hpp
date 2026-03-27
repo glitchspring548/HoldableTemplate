@@ -294,13 +294,53 @@ public:
     }
 
     static void fixShader(Renderer* rend) { //thanks to @pubertcs for helping wit this
-        auto shader1 = Shader::Find("Universal Render Pipeline/Unlit");
-        if (shader1 != nullptr) {
-            rend->GetMaterial()->SetShader(shader1);
-        } else {
-            auto shader2 = Shader::Find("Standard");
-            if (shader2 != nullptr) {
-                rend->GetMaterial()->SetShader(shader2);
+        std::vector<std::string> unityShaders = {
+                "Universal Render Pipeline/Unlit",
+                "Universal Render Pipeline/Lit",
+                "Unlit/Color",
+                "Unlit/Texture",
+                "Unlit/Transparent",
+                "Unlit/Transparent Cutout",
+                "Standard",
+                "Legacy Shaders/Diffuse",
+                "Legacy Shaders/Diffuse Detail",
+                "Legacy Shaders/Diffuse Fast",
+                "Legacy Shaders/Bumped Diffuse",
+                "Legacy Shaders/Bumped Specular",
+                "Legacy Shaders/Specular",
+                "Legacy Shaders/Glossy",
+                "Legacy Shaders/VertexLit",
+                "Legacy Shaders/Transparent/Diffuse",
+                "Legacy Shaders/Transparent/Specular",
+                "Legacy Shaders/Transparent/VertexLit",
+                "Legacy Shaders/Transparent/Bumped Diffuse",
+                "Legacy Shaders/Transparent/Bumped Specular",
+                "Legacy Shaders/Transparent Cutout/Diffuse",
+                "Legacy Shaders/Transparent Cutout/Specular",
+                "Legacy Shaders/Transparent Cutout/VertexLit",
+                "Legacy Shaders/Transparent Cutout/Bumped Diffuse",
+                "Legacy Shaders/Transparent Cutout/Bumped Specular",
+                "Legacy Shaders/Self-Illumin/Diffuse",
+                "Legacy Shaders/Self-Illumin/Specular",
+                "Legacy Shaders/Self-Illumin/VertexLit",
+                "Legacy Shaders/Self-Illumin/Bumped Diffuse",
+                "Legacy Shaders/Self-Illumin/Bumped Specular",
+                "Legacy Shaders/Reflective/Diffuse",
+                "Legacy Shaders/Reflective/Specular",
+                "Legacy Shaders/Reflective/VertexLit",
+                "Legacy Shaders/Reflective/Bumped Diffuse",
+                "Legacy Shaders/Reflective/Bumped Specular",
+                "Legacy Shaders/Reflective/Bumped VertexLit",
+                "UI/Default",
+                "GUI/Text Shader"
+        };
+
+        for (std::string string : unityShaders) {
+            Shader* shader = Shader::Find(string);
+            if (shader == nullptr) {
+                continue;
+            } else {
+                rend->GetMaterial()->SetShader(shader);
             }
         }
     }
