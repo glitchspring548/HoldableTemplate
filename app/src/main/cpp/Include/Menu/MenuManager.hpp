@@ -295,44 +295,13 @@ public:
 
     static void fixShader(Renderer* rend) { //thanks to @pubertcs for helping wit this
         std::vector<std::string> unityShaders = {
+                "Standard",
                 "Universal Render Pipeline/Unlit",
                 "Universal Render Pipeline/Lit",
                 "Unlit/Color",
                 "Unlit/Texture",
                 "Unlit/Transparent",
-                "Unlit/Transparent Cutout",
-                "Standard",
-                "Legacy Shaders/Diffuse",
-                "Legacy Shaders/Diffuse Detail",
-                "Legacy Shaders/Diffuse Fast",
-                "Legacy Shaders/Bumped Diffuse",
-                "Legacy Shaders/Bumped Specular",
-                "Legacy Shaders/Specular",
-                "Legacy Shaders/Glossy",
-                "Legacy Shaders/VertexLit",
-                "Legacy Shaders/Transparent/Diffuse",
-                "Legacy Shaders/Transparent/Specular",
-                "Legacy Shaders/Transparent/VertexLit",
-                "Legacy Shaders/Transparent/Bumped Diffuse",
-                "Legacy Shaders/Transparent/Bumped Specular",
-                "Legacy Shaders/Transparent Cutout/Diffuse",
-                "Legacy Shaders/Transparent Cutout/Specular",
-                "Legacy Shaders/Transparent Cutout/VertexLit",
-                "Legacy Shaders/Transparent Cutout/Bumped Diffuse",
-                "Legacy Shaders/Transparent Cutout/Bumped Specular",
-                "Legacy Shaders/Self-Illumin/Diffuse",
-                "Legacy Shaders/Self-Illumin/Specular",
-                "Legacy Shaders/Self-Illumin/VertexLit",
-                "Legacy Shaders/Self-Illumin/Bumped Diffuse",
-                "Legacy Shaders/Self-Illumin/Bumped Specular",
-                "Legacy Shaders/Reflective/Diffuse",
-                "Legacy Shaders/Reflective/Specular",
-                "Legacy Shaders/Reflective/VertexLit",
-                "Legacy Shaders/Reflective/Bumped Diffuse",
-                "Legacy Shaders/Reflective/Bumped Specular",
-                "Legacy Shaders/Reflective/Bumped VertexLit",
-                "UI/Default",
-                "GUI/Text Shader"
+                "Unlit/Transparent Cutout"
         };
 
         for (std::string string : unityShaders) {
