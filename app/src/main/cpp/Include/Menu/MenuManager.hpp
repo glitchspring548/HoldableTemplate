@@ -310,6 +310,8 @@ public:
                 continue;
             } else {
                 rend->GetMaterial()->SetShader(shader);
+                BNM_LOG_DEBUG("%s", string.c_str());
+                break;
             }
         }
     }
