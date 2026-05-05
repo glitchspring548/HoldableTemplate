@@ -33,6 +33,32 @@ Text* Settings::fpsText = nullptr;
 int Settings::pageNumber = 0;
 int Settings::_currentCategory = 0;
 
+/*
+ To change the colors you change the values here
+    backgroundColor = ExtGradient { .rainbow = true };
+    buttonColors = {
+            ExtGradient { .pastelRainbow = true },
+            ExtGradient { .colors = ExtGradient::GetSolidGradient(Color::green) }
+    };
+    textColors = {
+            Color::white,
+            Color::white
+    };
+ if you don't want RGB do this
+    backgroundColor = ExtGradient { .colors = ExtGradient::GetSolidGradient(Color::red) };
+    buttonColors = {
+            ExtGradient { .colors = ExtGradient::GetSolidGradient(Color::red) },
+            ExtGradient { .colors = ExtGradient::GetSolidGradient(Color::green) }
+    };
+    textColors = {
+            Color::white,
+            Color::white
+    };
+ to change the colors use Color() for more advanced colors or just Color::(insert color name here)
+ if you want a normal gradient do this
+ ExtGradient { .colors = ExtGradient::GetSimpleGradient(color A, color B) },
+*/
+
 void Settings::Init() {
     backgroundColor = ExtGradient { .rainbow = true };
     buttonColors = {
