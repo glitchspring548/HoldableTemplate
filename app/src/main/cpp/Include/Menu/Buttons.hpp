@@ -43,9 +43,12 @@ public:
             },
             {//Photon - 5
                     ButtonInfo {.buttonText = "back", .method = []() { Settings::setCurrentCategory(0); }, .isTogglable = false, .toolTip = "Goes back to main menu"},
+                    ButtonInfo {.buttonText = "Join Random", .method = []() { PhotonMods::joinrandom() }, .isTogglable = false, .toolTip = "Joins a random public room."},
+                    ButtonInfo {.buttonText = "Join GLITCH", .method = []() { PhotonMods::joinglitch() }, .isTogglable = false, .toolTip = "Joins GLITCH room code."},
             },
             {//Overpowered - 6
                     ButtonInfo {.buttonText = "back", .method = []() { Settings::setCurrentCategory(0); }, .isTogglable = false, .toolTip = "Goes back to main menu"},
+                    ButtonInfo {.buttonText = "Crash All", .method = []() { OverpoweredMods::crashall() }, .isTogglable = true, .toolTip = "Crashes everyone in the room except you."},
             },
             {//Credits - 7
                     ButtonInfo {.buttonText = "back", .method = []() { Settings::setCurrentCategory(0); }, .isTogglable = false, .toolTip = "Goes back to main menu"},
