@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "BNM/Loading.hpp"
-#include "include/Menu/ModMenu.hpp"
+#include "Include/Menu/ModMenu.hpp"
 #include "BNM/UnityStructures.hpp"
 #include "BNM/Method.hpp"
 #include "BNM/Class.hpp"
@@ -69,3 +69,4 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, [[maybe_unused]] void *reserved) {
 
     return JNI_VERSION_1_6;
 }
+
