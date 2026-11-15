@@ -29,7 +29,7 @@ The repository's current source contains attribution references to the following
 - **iiDk** — created the original template.
 - **Ossuary**, **Pubert**, and **Notfishvr** — credited in the in-menu Credits page for helping during development.
 - **Lmko / KawaiiClique** — created the `NotiLib`.
-- **BNM-Android**, **Dobby**, and **OpenSSL** — native dependencies CMake build.
+- **BNM-Android**, **Dobby**, and **OpenSSL** — native dependencies CMake build
 
 # Please give credits
 When I ([@glitchspring548](https://www.github.com/glitchspring548)) originaly created this template people immediately started to clam that it was not mine and instead was theirs.
