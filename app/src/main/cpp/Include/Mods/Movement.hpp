@@ -6,6 +6,7 @@
 #include "../json.hpp"
 #include "../XRInput.hpp"
 #include "GunLib.hpp"
+#include "gtag.hpp"
 
 class MovementMods {
 private:
@@ -92,5 +93,17 @@ public:
         } else {
             gun.Cleanup();
         }
+    }
+
+    static void HeadFly() {
+        float con = XRInput::GetFloatFeature(Trigger, Right); // finds right controller
+        if (con < 0.5f) return; // if the controller is not pressed more then half way down, stop
+        Transform* hd = gtag::head(); // get head
+        Rigidbody* rigidb = gtag::rb();  // get rigidbody
+        Transform* root = gtag::roottrans(); // get root transform
+        if (!hd || !root) return; // stop if it cant find
+        Vector3 s = hd->GetForward() * Time::GetDeltaTime() * 12.0f;  // get wher the head is looking at, then multiply it by how many frames have run since the code ran, times 12
+        root->SetPosition(root->GetPosition() + s); // if it can find the rigidbody, move it
+        if (rigidb) rigidb->SetVelocity(Vector3(0,0,0)); // stop the rigidbody
     }
 };

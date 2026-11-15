@@ -1,5 +1,30 @@
 #pragma once
-#include "BNMIncludes.hpp" // Add your bnm includes here
+#include <BNM/BasicMonoStructures.hpp>
+#include <BNM/Class.hpp>
+#include <BNM/ClassesManagement.hpp>
+#include <BNM/ComplexMonoStructures.hpp>
+#include <BNM/Coroutine.hpp>
+#include <BNM/DebugMessages.hpp>
+#include <BNM/Defaults.hpp>
+#include <BNM/Delegates.hpp>
+#include <BNM/Event.hpp>
+#include <BNM/EventBase.hpp>
+#include <BNM/EventBase.hpp>
+#include <BNM/Exceptions.hpp>
+#include <BNM/Field.hpp>
+#include <BNM/FieldBase.hpp>
+#include <BNM/Il2CppHeaders.hpp>
+#include <BNM/Image.hpp>
+#include <BNM/Loading.hpp>
+#include <BNM/Method.hpp>
+#include <BNM/MethodBase.hpp>
+#include <BNM/Operators.hpp>
+#include <BNM/Property.hpp>
+#include <BNM/PropertyBase.hpp>
+#include <BNM/UnityStructures.hpp>
+#include <BNM/Utils.hpp>
+
+#define O(str) BNM_OBFUSCATE(str)
 
 using namespace BNM;
 using namespace Structures::Unity;
@@ -24,7 +49,6 @@ struct RectTransform;
 struct Graphic;
 struct MaskableGraphic;
 struct Text;
-struct UnityWebRequest;
 struct Font;
 struct LineRenderer;
 struct Rigidbody;
@@ -46,20 +70,15 @@ struct Skybox;
 struct Sprite;
 struct QualitySettings;
 struct ParticleSystem;
-struct EmissionModule;
 struct Light;
 struct AudioClip;
 struct AudioSource;
 struct LODGroup;
+struct Matrix4x4;
 struct Animator;
 struct MonoBehaviour;
-struct Application;
-struct SkinnedMeshRenderer;
-struct DownloadHandlerTexture;
-struct GL;
-struct TextMeshPro;
-struct TMP_Text;
 
+//enums
 enum GradientMode
 {
     Blend,
@@ -93,47 +112,6 @@ enum TextAnchor
     LowerRight
 };
 
-enum TextAlignmentOptions
-{
-    TopLeft = 257,
-    Top = 258,
-    TopRight = 260,
-    TopJustified = 264,
-    TopFlush = 272,
-    TopGeoAligned = 288,
-    LLeft = 513,
-    Center = 514,
-    RRight = 516,
-    Justified = 520,
-    Flush = 528,
-    CenterGeoAligned = 544,
-    BottomLeft = 1025,
-    Bottom = 1026,
-    BottomRight = 1028,
-    BottomJustified = 1032,
-    BottomFlush = 1040,
-    BottomGeoAligned = 1056,
-    BaselineLeft = 2049,
-    Baseline = 2050,
-    BaselineRight = 2052,
-    BaselineJustified = 2056,
-    BaselineFlush = 2064,
-    BaselineGeoAligned = 2080,
-    MidlineLeft = 4097,
-    Midline = 4098,
-    MidlineRight = 4100,
-    MidlineJustified = 4104,
-    MidlineFlush = 4112,
-    MidlineGeoAligned = 4128,
-    CaplineLeft = 8193,
-    Capline = 8194,
-    CaplineRight = 8196,
-    CaplineJustified = 8200,
-    CaplineFlush = 8208,
-    CaplineGeoAligned = 8224,
-    Converted = 65535
-};
-
 enum ForceMode
 {
     Force = 0,
@@ -156,6 +134,7 @@ enum SpriteMeshType
     Tight
 };
 
+// idk if this is correct or not
 enum TextureFormat
 {
     Alpha8 = 1,
@@ -253,6 +232,7 @@ enum TextureFormat
     RGBA5551 = 123,
 };
 
+//structs
 struct GradientColorKey {
     Color color;
     float time;
@@ -364,16 +344,7 @@ struct Component : NamedObject{
         static Method<void> set_tag = GetClass().GetMethod("set_tag");
         set_tag[this](CreateMonoString(tag));
     }
-    Transform* Find(std::string n) {
-        static Method<Transform*> Find = GetClass().GetMethod("Find", { "n" });
-        Transform* found = Find[this](CreateMonoString(n));
-        return found;
-    }
-    Transform* FindChild(int index) {
-        static auto FindChild = (Transform*(*)(void*, int))GetExternMethod("UnityEngine.Transform::FindChild");
-        Transform* found = FindChild(this, index);
-        return found;
-    }
+
     std::string GetName(){
         static Method<String*> get_name = GetClass().GetMethod("get_name");
         auto tag = get_name[this]();
@@ -409,19 +380,11 @@ struct GameObject : NamedObject{
         static Class mclass = Class("UnityEngine", "GameObject");
         return mclass;
     }
-    static void Destroy(Object* obj) {
-        if (!obj || !obj->Alive()) return;
+    static void Destroy(Object* obj){
         static Method<void> Destroy = Class("UnityEngine", "Object").GetMethod("Destroy", 1);
-        if (Destroy.IsValid()) {
-            Destroy(obj);
-        }
-        else {
-            static Method<void> Destroy = Class("UnityEngine", "Object").GetMethod("Destroy", 2);
-            Destroy(obj);
-        }
+        Destroy(obj);
     }
     static void Destroy(Object* obj, float t) {
-        if (!obj || !obj->Alive()) return;
         static Method<void> Destroy = Class("UnityEngine", "Object").GetMethod("Destroy", 2);
         Destroy(obj, t);
     }
@@ -660,16 +623,6 @@ struct Camera : Behaviour{
         static auto get_main = (Camera*(*)())GetExternMethod("UnityEngine.Camera::get_main");
         return get_main();
     }
-
-    float GetFarClipPlane() {
-        static Method<float> get_farClipPlane = GetClass().GetMethod("get_farClipPlane");
-        return get_farClipPlane[this]();
-    }
-
-    void SetFarClipPlane(float value) {
-        static Method<void> set_farClipPlane = GetClass().GetMethod("set_farClipPlane");
-        set_farClipPlane[this](value);
-    }
 };
 struct Canvas : Behaviour{
     static MonoType* GetType(){
@@ -813,15 +766,6 @@ struct Renderer : Component{
         return mclass;
     }
 
-    void SetEnabled(bool value) {
-        static auto set_enabled = (void(*)(void*, bool))GetExternMethod("UnityEngine.Renderer::set_enabled");
-        set_enabled(this, value);
-    }
-    bool GetEnabled() {
-        static auto get_enabled = (bool(*)(void*))GetExternMethod("UnityEngine.Renderer::get_enabled");
-        return get_enabled(this);
-    }
-
     Material* GetMaterial(){
         static auto getMaterial = (Material*(*)(void*)) GetExternMethod("UnityEngine.Renderer::GetMaterial");
         return getMaterial(this);
@@ -829,41 +773,6 @@ struct Renderer : Component{
     void SetMaterial(Material* material){
         static auto setMaterial = (void(*)(void*, Material*)) GetExternMethod("UnityEngine.Renderer::SetMaterial");
         setMaterial(this, material);
-    }
-    Array<Material*>* GetMaterialArray() {
-        static auto GetMaterialArray = (Array<Material*>*(*)(void*))GetExternMethod("UnityEngine.Renderer::GetMaterialArray");
-        return GetMaterialArray(this);
-    }
-
-};
-struct SkinnedMeshRenderer : Renderer {
-    static Class GetClass() {
-        static Class mclass = Class("UnityEngine", "SkinnedMeshRenderer");
-        return mclass;
-    }
-    static MonoType* GetMonoType() {
-        return GetClass().GetMonoType();
-    }
-
-    Array<Transform*>* GetBones() {
-        static auto get_bones = (Array<Transform*>*(*)(void*))GetExternMethod("UnityEngine.SkinnedMeshRenderer::get_bones");
-        return get_bones(this);
-    }
-    void SetBones(Array<Transform*>* bones) {
-        static auto set_bones = (void(*)(void*, Array<Transform*>*))GetExternMethod("UnityEngine.SkinnedMeshRenderer::set_bones");
-        return set_bones(this, bones);
-    }
-    Transform* GetRootBone() {
-        static auto get_rootBone = (Transform*(*)(void*))GetExternMethod("UnityEngine.SkinnedMeshRenderer::get_rootBone");
-        return get_rootBone(this);
-    }
-    bool GetUpdateWhenOffscreen() {
-        static auto get_updateWhenOffscreen = (bool(*)(void*))GetExternMethod("UnityEngine.SkinnedMeshRenderer::get_updateWhenOffscreen");
-        return get_updateWhenOffscreen(this);
-    }
-    void SetUpdateWhenOffscreen(bool value) {
-        static auto set_updateWhenOffscreen = (void(*)(void*, bool))GetExternMethod("UnityEngine.SkinnedMeshRenderer::set_updateWhenOffscreen");
-        set_updateWhenOffscreen(this, value);
     }
 };
 struct RectTransform : Transform{
@@ -1064,7 +973,7 @@ struct LineRenderer : Renderer{
         return color;
     }
     void SetEndColor(Color val){
-        static Method<void> set_startColor = GetClass().GetMethod("set_endColor");
+        static Method<void> set_startColor = GetClass().GetMethod("set_startColor");
         set_startColor[this](val);
     }
     Color GetEndColor(){
@@ -1094,6 +1003,14 @@ struct Rigidbody : Component{
     static Class GetClass(){
         static Class mclass = Class("UnityEngine", "Rigidbody");
         return mclass;
+    }
+    void SetDetectCollisions(bool detectCollisions){
+        static auto set_detectCollisions = (void(*)(void*, bool))GetExternMethod("UnityEngine.Rigidbody::set_detectCollisions");
+        set_detectCollisions(this, detectCollisions);
+    }
+    bool GetDetectCollisions(bool detectCollisions){
+        static auto get_detectCollisions = (bool(*)(void*))GetExternMethod("UnityEngine.Rigidbody::get_detectCollisions");
+        return get_detectCollisions(this);
     }
     void SetUseGravity(bool useGravity){
         static auto set_useGravity = (void(*)(void*, bool))GetExternMethod("UnityEngine.Rigidbody::set_useGravity");
@@ -1156,16 +1073,6 @@ struct Time{
     static float GetUnscaledDeltaTime() {
         static auto get_time = (float(*)())GetExternMethod("UnityEngine.Time::get_unscaledDeltaTime");
         return get_time();
-    }
-
-    static float GetFixedDeltaTime() {
-        static auto get_fixedDeltaTime = (float(*)())GetExternMethod("UnityEngine.Time::get_fixedDeltaTime");
-        return get_fixedDeltaTime();
-    }
-
-    static void SetFixedDeltaTime(float value) {
-        static auto set_fixedDeltaTime = (void(*)(float))GetExternMethod("UnityEngine.Time::set_fixedDeltaTime");
-        set_fixedDeltaTime(value);
     }
 };
 struct Collider : Component{
@@ -1748,76 +1655,6 @@ struct QualitySettings {
         static Class mclass = Class("UnityEngine", "QualitySettings");
         return mclass;
     }
-
-    static bool GetRealtimeReflectionProbes() {
-        static Method<bool> get_realtimeReflectionProbes = GetClass().GetMethod("get_realtimeReflectionProbes");
-        return get_realtimeReflectionProbes();
-    }
-
-    static void SetRealtimeReflectionProbes(bool value) {
-        static Method<void> set_realtimeReflectionProbes = GetClass().GetMethod("set_realtimeReflectionProbes");
-        set_realtimeReflectionProbes(value);
-    }
-
-    static int GetAnisotropicFiltering() {
-        static Method<int> get_anisotropicFiltering = GetClass().GetMethod("get_anisotropicFiltering");
-        return get_anisotropicFiltering();
-    }
-
-    static void SetAnisotropicFiltering(int value) {
-        static Method<void> set_anisotropicFiltering = GetClass().GetMethod("set_anisotropicFiltering");
-        set_anisotropicFiltering(value);
-    }
-
-    static int GetVSyncCount() {
-        static Method<int> get_vSyncCount = GetClass().GetMethod("get_vSyncCount");
-        return get_vSyncCount();
-    }
-
-    static void SetVSyncCount(int value) {
-        static Method<void> set_vSyncCount = GetClass().GetMethod("set_vSyncCount");
-        set_vSyncCount(value);
-    }
-
-    static int GetMasterTextureLimit() {
-        static Method<int> get_masterTextureLimit = GetClass().GetMethod("get_masterTextureLimit");
-        return get_masterTextureLimit();
-    }
-
-    static void SetMasterTextureLimit(int value) {
-        static Method<void> set_masterTextureLimit = GetClass().GetMethod("set_masterTextureLimit");
-        set_masterTextureLimit(value);
-    }
-
-    static float GetShadowDistance() {
-        static Method<float> get_shadowDistance = GetClass().GetMethod("get_shadowDistance");
-        return get_shadowDistance();
-    }
-
-    static void SetShadowDistance(float value) {
-        static Method<void> set_shadowDistance = GetClass().GetMethod("set_shadowDistance");
-        set_shadowDistance(value);
-    }
-
-    static float GetLodBias() {
-        static Method<float> get_lodBias = GetClass().GetMethod("get_lodBias");
-        return get_lodBias();
-    }
-
-    static void SetLodBias(float value) {
-        static Method<void> set_lodBias = GetClass().GetMethod("set_lodBias");
-        set_lodBias(value);
-    }
-
-    static int GetAntiAliasing() {
-        static Method<int> get_antiAliasing = GetClass().GetMethod("get_antiAliasing");
-        return get_antiAliasing();
-    }
-
-    static void SetAntiAliasing(int value) {
-        static Method<void> set_antiAliasing = GetClass().GetMethod("set_antiAliasing");
-        set_antiAliasing(value);
-    }
 };
 
 struct AudioSource : Behaviour {
@@ -1953,84 +1790,6 @@ struct AudioClip : NamedObject {
     }
 };
 
-struct PlayerPrefs {
-    static MonoType* GetType(){
-        static MonoType* type = Class("UnityEngine", "PlayerPrefs").GetMonoType();
-        return type;
-    }
-    static Class GetClass(){
-        static Class mclass = Class("UnityEngine", "PlayerPrefs");
-        return mclass;
-    }
-
-    static void SetInt(std::string key, int value) {
-        static Method<void> SetInt = GetClass().GetMethod("SetInt", 2);
-        SetInt(CreateMonoString(key), value);
-    }
-
-    static int GetInt(std::string key, int defaultValue = 0) {
-        static Method<int> GetInt = GetClass().GetMethod("GetInt", 2);
-        return GetInt(CreateMonoString(key), defaultValue);
-    }
-
-    static int GetInt(std::string key) {
-        static Method<int> GetInt = GetClass().GetMethod("GetInt", 1);
-        return GetInt(CreateMonoString(key));
-    }
-
-    static void SetString(std::string key, std::string value) {
-        static Method<void> SetString = GetClass().GetMethod("SetString", 2);
-        SetString(CreateMonoString(key), CreateMonoString(value));
-    }
-
-    static std::string GetString(std::string key, std::string defaultValue = "") {
-        static Method<String*> GetString = GetClass().GetMethod("GetString", 2);
-        String* result = GetString(CreateMonoString(key), CreateMonoString(defaultValue));
-        return result->str();
-    }
-
-    static std::string GetString(std::string key) {
-        static Method<String*> GetString = GetClass().GetMethod("GetString", 1);
-        String* result = GetString(CreateMonoString(key));
-        return result->str();
-    }
-
-    static void SetFloat(std::string key, float value) {
-        static Method<void> SetFloat = GetClass().GetMethod("SetFloat", 2);
-        SetFloat(CreateMonoString(key), value);
-    }
-
-    static float GetFloat(std::string key, float defaultValue = 0.0f) {
-        static Method<float> GetFloat = GetClass().GetMethod("GetFloat", 2);
-        return GetFloat(CreateMonoString(key), defaultValue);
-    }
-
-    static float GetFloat(std::string key) {
-        static Method<float> GetFloat = GetClass().GetMethod("GetFloat", 1);
-        return GetFloat(CreateMonoString(key));
-    }
-
-    static bool HasKey(std::string key) {
-        static Method<bool> HasKey = GetClass().GetMethod("HasKey", 1);
-        return HasKey(CreateMonoString(key));
-    }
-
-    static void DeleteKey(std::string key) {
-        static Method<void> DeleteKey = GetClass().GetMethod("DeleteKey", 1);
-        DeleteKey(CreateMonoString(key));
-    }
-
-    static void DeleteAll() {
-        static Method<void> DeleteAll = GetClass().GetMethod("DeleteAll");
-        DeleteAll();
-    }
-
-    static void Save() {
-        static Method<void> Save = GetClass().GetMethod("Save");
-        Save();
-    }
-};
-
 struct Light : Behaviour {
     static MonoType* GetType(){
         static MonoType* type = Class("UnityEngine", "Light").GetMonoType();
@@ -2039,16 +1798,6 @@ struct Light : Behaviour {
     static Class GetClass(){
         static Class mclass = Class("UnityEngine", "Light");
         return mclass;
-    }
-
-    int GetShadows() {
-        static Method<int> get_shadows = GetClass().GetMethod("get_shadows");
-        return get_shadows[this]();
-    }
-
-    void SetShadows(int value) {
-        static Method<void> set_shadows = GetClass().GetMethod("set_shadows");
-        set_shadows[this](value);
     }
 };
 
@@ -2060,318 +1809,5 @@ struct ParticleSystem : Component {
     static Class GetClass(){
         static Class mclass = Class("UnityEngine", "ParticleSystem");
         return mclass;
-    }
-
-    struct EmissionModule {
-        static Class GetClass() {
-            static Class mclass = Class("UnityEngine", "ParticleSystem+EmissionModule");
-            return mclass;
-        }
-
-        float GetRateOverTimeMultiplier() {
-            static Method<float> get_rateOverTimeMultiplier = GetClass().GetMethod("get_rateOverTimeMultiplier");
-            return get_rateOverTimeMultiplier[this]();
-        }
-
-        void SetRateOverTimeMultiplier(float value) {
-            static Method<void> set_rateOverTimeMultiplier = GetClass().GetMethod("set_rateOverTimeMultiplier");
-            set_rateOverTimeMultiplier[this](value);
-        }
-    };
-
-    EmissionModule GetEmission() {
-        static Method<EmissionModule> get_emission = GetClass().GetMethod("get_emission");
-        return get_emission[this]();
-    }
-};
-
-struct Application {
-    static MonoType* GetType(){
-        static MonoType* type = Class("UnityEngine", "Application").GetMonoType();
-        return type;
-    }
-    static Class GetClass(){
-        static Class mclass = Class("UnityEngine", "Application");
-        return mclass;
-    }
-
-
-    static std::string GetIdentifier() {
-        static auto get_idientifier = (String*(*)())GetExternMethod("UnityEngine.Application::get_identifier");
-        String* id = get_idientifier();
-        return id->str();
-    }
-    static int GetTargetFrameRate() {
-        static Method<int> get_targetFrameRate = GetClass().GetMethod("get_targetFrameRate");
-        return get_targetFrameRate();
-    }
-    static void SetTargetFrameRate(int targetFrameRate) {
-        static Method<void> set_targetFrameRate = GetClass().GetMethod("set_targetFrameRate");
-        set_targetFrameRate(targetFrameRate);
-    }
-    static void OpenUrl(std::string url) {
-        static auto openurl = (void(*)(String*))GetExternMethod("UnityEngine.Application::OpenURL");
-        openurl(CreateMonoString(url));
-    }
-    static void Quit() {
-        static Method<void> quit = GetClass().GetMethod("Quit");
-        quit();
-    }
-};
-
-struct DownloadHandler : Object {
-    static MonoType* GetType(){
-        static MonoType* type = Class("UnityEngine.Networking", "DownloadHandler").GetMonoType();
-        return type;
-    }
-    static Class GetClass(){
-        static Class mclass = Class("UnityEngine.Networking", "DownloadHandler");
-        return mclass;
-    }
-
-    bool GetIsDone() {
-        static Method<bool> get_isDone = GetClass().GetMethod("get_isDone");
-        return get_isDone[this]();
-    }
-
-    Array<uint8_t>* GetData() {
-        static Method<Array<uint8_t>*> get_data = GetClass().GetMethod("get_data");
-        return get_data[this]();
-    }
-
-    std::string GetText() {
-        static Method<String*> get_text = GetClass().GetMethod("get_text");
-        String* text = get_text[this]();
-        return text->str();
-    }
-
-    bool GetHasError() {
-        static Method<bool> get_hasError = GetClass().GetMethod("get_hasError");
-        return get_hasError[this]();
-    }
-
-    std::string GetError() {
-        static Method<String*> get_error = GetClass().GetMethod("get_error");
-        String* error = get_error[this]();
-        return error->str();
-    }
-
-    void Dispose() {
-        static Method<void> Dispose = GetClass().GetMethod("Dispose");
-        Dispose[this]();
-    }
-};
-
-struct DownloadHandlerTexture : DownloadHandler {
-    static Class GetClass() {
-        static Class mclass = Class("UnityEngine.Networking", "DownloadHandlerTexture");
-        return mclass;
-    }
-
-    Texture2D* GetTexture() {
-        static Method<Texture2D*> getTexture = GetClass().GetMethod("get_texture", 0);
-        return getTexture(this);
-    }
-
-    static Texture2D* GetContent(UnityWebRequest* www) {
-        static Method<Texture2D*> getContent = GetClass().GetMethod("GetContent", 1);
-        return getContent(www);
-    }
-};
-
-struct UnityWebRequest : Object {
-    static MonoType* GetType(){
-        static MonoType* type = Class("UnityEngine.Networking", "UnityWebRequest").GetMonoType();
-        return type;
-    }
-    static Class GetClass(){
-        static Class mclass = Class("UnityEngine.Networking", "UnityWebRequest");
-        return mclass;
-    }
-
-    static UnityWebRequest* Get(std::string uri) {
-        static Method<UnityWebRequest*> Get = GetClass().GetMethod("Get", 1);
-        return Get(CreateMonoString(uri));
-    }
-
-    static UnityWebRequest* Post(std::string uri, std::string postData) {
-        static Method<UnityWebRequest*> Post = GetClass().GetMethod("Post", 2);
-        return Post(CreateMonoString(uri), CreateMonoString(postData));
-    }
-
-    static UnityWebRequest* Put(std::string uri, Array<uint8_t>* bodyData) {
-        static Method<UnityWebRequest*> Put = GetClass().GetMethod("Put", 2);
-        return Put(CreateMonoString(uri), bodyData);
-    }
-
-    static UnityWebRequest* Delete(std::string uri) {
-        static Method<UnityWebRequest*> Delete = GetClass().GetMethod("Delete", 1);
-        return Delete(CreateMonoString(uri));
-    }
-
-    void SetDownloadHandler(DownloadHandler* downloadHandler) {
-        static Method<void> set_downloadHandler = GetClass().GetMethod("set_downloadHandler");
-        set_downloadHandler[this](downloadHandler);
-    }
-
-    DownloadHandler* GetDownloadHandler() {
-        static Method<DownloadHandler*> get_downloadHandler = GetClass().GetMethod("get_downloadHandler");
-        return get_downloadHandler[this]();
-    }
-
-    void SetUrl(std::string url) {
-        static Method<void> set_url = GetClass().GetMethod("set_url");
-        set_url[this](CreateMonoString(url));
-    }
-
-    std::string GetUrl() {
-        static Method<String*> get_url = GetClass().GetMethod("get_url");
-        String* url = get_url[this]();
-        return url->str();
-    }
-
-    void SetMethod(std::string method) {
-        static Method<void> set_method = GetClass().GetMethod("set_method");
-        set_method[this](CreateMonoString(method));
-    }
-
-    static UnityWebRequest* GetTexture(std::string url, bool nonReadable = false) {
-        static Class uwrt = Class("UnityEngine.Networking", "UnityWebRequestTexture");
-        static Method<UnityWebRequest*> getTex = uwrt.GetMethod("GetTexture", 2);
-        return getTex(CreateMonoString(url), nonReadable);
-    }
-
-    static UnityWebRequest* GetTexture(std::string url) {
-        return GetTexture(url, false);
-    }
-
-    std::string GetMethod() {
-        static Method<String*> get_method = GetClass().GetMethod("get_method");
-        String* method = get_method[this]();
-        return method->str();
-    }
-
-    bool GetIsDone() {
-        static Method<bool> get_isDone = GetClass().GetMethod("get_isDone");
-        return get_isDone[this]();
-    }
-
-    bool GetHasError() {
-        static Method<bool> get_hasError = GetClass().GetMethod("get_hasError");
-        return get_hasError[this]();
-    }
-
-    std::string GetError() {
-        static Method<String*> get_error = GetClass().GetMethod("get_error");
-        String* error = get_error[this]();
-        return error->str();
-    }
-
-    long GetResponseCode() {
-        static Method<long> get_responseCode = GetClass().GetMethod("get_responseCode");
-        return get_responseCode[this]();
-    }
-
-    void SetRequestHeader(std::string name, std::string value) {
-        static Method<void> SetRequestHeader = GetClass().GetMethod("SetRequestHeader", 2);
-        SetRequestHeader[this](CreateMonoString(name), CreateMonoString(value));
-    }
-
-    void SendWebRequest() {
-        static Method<void> SendWebRequest = GetClass().GetMethod("SendWebRequest");
-        SendWebRequest[this]();
-    }
-
-    void Abort() {
-        static Method<void> Abort = GetClass().GetMethod("Abort");
-        Abort[this]();
-    }
-
-    void Dispose() {
-        static Method<void> Dispose = GetClass().GetMethod("Dispose");
-        Dispose[this]();
-    }
-};
-
-struct GL{
-    static MonoType* GetType(){
-        return Class("UnityEngine", "GL").GetMonoType();
-    }
-    static Class GetClass() {
-        return Class("UnityEngine", "GL");
-    }
-
-    static void Begin(int mode){
-        static Method<void> Begin = GetClass().GetMethod("Begin");
-        Begin(mode);
-    }
-    static void End(){
-        static Method<void> End = GetClass().GetMethod("End");
-        End();
-    }
-    static void Color(Color color){
-        static Method<void> Color = GetClass().GetMethod("Color");
-        Color(color);
-    }
-    static void Vertex3(float x, float y, float z){
-        static Method<void> Vertex3 = GetClass().GetMethod("Vertex3");
-        Vertex3(x,y,z);
-    }
-    static void Vertex(Vector3 vector3){
-        Vertex3(vector3.x, vector3.y, vector3.z);
-    }
-    static void PushMatrix(){
-        static Method<void> PushMatrix = GetClass().GetMethod("PushMatrix");
-        PushMatrix();
-    }
-    static void PopMatrix(){
-        static Method<void> PopMatrix = GetClass().GetMethod("PopMatrix");
-        PopMatrix();
-    }
-
-};
-struct TMP_Text : MaskableGraphic{
-    static MonoType* GetType(){
-        return Class("TMPro", "TMP_Text").GetMonoType();
-    }
-    static Class GetClass(){
-        return Class("TMPro", "TMP_Text");
-    }
-    std::string GetText(){
-        static Method<String*> get_text = GetClass().GetMethod("get_text");
-        auto str = get_text[this]();
-        return str->str();
-    }
-    void SetText(std::string text){
-        static Method<void> set_text = GetClass().GetMethod("set_text");
-        set_text[this](CreateMonoString(text));
-    }
-    float GetFontSize(){
-        static Method<float> get_fontSize = GetClass().GetMethod("get_fontSize");
-        return get_fontSize[this]();
-    }
-    void SetFontSize(float size){
-        static Method<void> set_fontSize = GetClass().GetMethod("set_fontSize");
-        set_fontSize[this](size);
-    }
-    TextAlignmentOptions GetAlignment(){
-        static Method<TextAlignmentOptions> get_alignment = GetClass().GetMethod("get_alignment");
-        return get_alignment[this]();
-    }
-    void SetAlignment(TextAlignmentOptions alignment){
-        static Method<void> set_alignment = GetClass().GetMethod("set_alignment");
-        set_alignment[this](alignment);
-    }
-    void SetEnableAutoSizing(bool value){
-        static Method<void> set_enableAutoSizing = GetClass().GetMethod("set_enableAutoSizing");
-        return set_enableAutoSizing[this](value);
-    }
-};
-struct TextMeshPro : TMP_Text{
-    static MonoType* GetType(){
-        return Class("TMPro", "TextMeshPro").GetMonoType();
-    }
-    static Class GetClass(){
-        return Class("TMPro", "TextMeshPro");
     }
 };
